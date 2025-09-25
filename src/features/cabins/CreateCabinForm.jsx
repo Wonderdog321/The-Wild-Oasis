@@ -1,13 +1,14 @@
 import { useForm } from "react-hook-form";
 import { useCreateCabin } from "./useCreateCabin";
 import { useEditCabin } from "./useEditCabin";
-
+import { RiErrorWarningFill } from "react-icons/ri";
 import Input from "../../ui/Input";
 import Form from "../../ui/Form";
 import Button from "../../ui/Button";
 import FileInput from "../../ui/FileInput";
 import Textarea from "../../ui/Textarea";
 import FormRow from "../../ui/FormRow";
+import toast from "react-hot-toast";
 
 function CreateCabinForm({ cabinToEdit = {}, onCloseModal }) {
   const { id: editId, ...editValues } = cabinToEdit;
@@ -21,10 +22,35 @@ function CreateCabinForm({ cabinToEdit = {}, onCloseModal }) {
   const { isEditing, editCabin } = useEditCabin();
 
   function onSubmit(data) {
-    console.log(data.image);
     const image = typeof data.image === "string" ? data.image : data.image[0];
 
     if (isEditSession) {
+      //Checks if all values are the same then will not submit.
+      const isEdited = Object.keys(data).some((value) => {
+        return data[value] !== editValues[value];
+      });
+      if (!isEdited) {
+        toast(
+          "No changes have been made.\nPlease modify a field and try again.",
+          {
+            icon: (
+              <span
+                style={{
+                  fontSize: "34px",
+                  color: "#FFD700",
+                  display: "flex",
+                  alignItems: "center",
+                  height: "100%",
+                }}
+              >
+                <RiErrorWarningFill />
+              </span>
+            ),
+          }
+        );
+        return;
+      }
+
       editCabin(
         { newCabinData: { ...data, image }, id: editId },
         {
