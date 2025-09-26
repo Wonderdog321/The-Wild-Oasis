@@ -1,4 +1,6 @@
+import { useSearchParams } from "react-router-dom";
 import styled, { css } from "styled-components";
+import SortBy from "./SortBy";
 
 const StyledFilter = styled.div`
   border: 1px solid var(--color-grey-100);
@@ -33,3 +35,40 @@ const FilterButton = styled.button`
     color: var(--color-brand-50);
   }
 `;
+
+export default function Filter({ filterField, options }) {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const currentFilter = searchParams.get(filterField) || options.at(0).value;
+
+  function handleClick(value) {
+    searchParams.set(filterField, value);
+    setSearchParams(searchParams);
+  }
+
+  return (
+    <>
+      <StyledFilter>
+        {options.map((option) => (
+          <FilterButton
+            key={option.value}
+            onClick={() => handleClick(option.value)}
+            active={option.value === currentFilter}
+            disabled={option.value === currentFilter}
+          >
+            {option.label}
+          </FilterButton>
+        ))}
+      </StyledFilter>
+      <SortBy
+        options={[
+          { value: "name-asc", label: "Sort by name (A-Z)" },
+          { value: "name-desc", label: "Sort by name (Z-A)" },
+          { value: "regularPrice-asc", label: "Sort by Price (low-high)" },
+          { value: "regularPrice-desc", label: "Sort by Price (high-low)" },
+          { value: "maxCapacity-asc", label: "Sort by Capacity (low-high)" },
+          { value: "maxCapacity-desc", label: "Sort by Capacity (high-low)" },
+        ]}
+      />
+    </>
+  );
+}
