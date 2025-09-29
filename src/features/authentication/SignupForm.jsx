@@ -77,7 +77,12 @@ function SignupForm() {
       </FormRow>
 
       <FormRow>
-        <Button $variation="secondary" type="reset" disabled={isPending}>
+        <Button
+          $variation="secondary"
+          type="reset"
+          disabled={isPending}
+          onClick={reset}
+        >
           Cancel
         </Button>
         <Button disabled={isPending}>
